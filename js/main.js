@@ -23,7 +23,7 @@ var bombs;
 var platforms;
 var cursors;
 var score = 0;
-var gameOver = false;
+var gameOver = true;
 var scoreText;
 
 var game = new Phaser.Game(config);
@@ -40,43 +40,46 @@ function preload ()
 
 function create()
 {
+    var sprite = this.add.sprite(400, 300, 'eye').setInteractive().on('pointerdown', () => startGame(this) );
+}
+
+function startGame (context)
+{
+    gameOver = false;
+    
+    //  A simple background for our game
+    context.add.image(400, 300, 'sky');
+
     // The player and its settings
-    player = this.physics.add.sprite(100, 450, 'dude');
+    player = context.physics.add.sprite(100, 450, 'dude');
 
     //  Player physics properties. Give the little guy a slight bounce.
     player.setBounce(0.2);
     player.setCollideWorldBounds(true);
 
     //  Our player animations, turning, walking left and walking right.
-    this.anims.create({
+    context.anims.create({
         key: 'left',
-        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+        frames: context.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
         frameRate: 10,
         repeat: -1
     });
 
-    this.anims.create({
+    context.anims.create({
         key: 'turn',
         frames: [ { key: 'dude', frame: 4 } ],
         frameRate: 20
     });
 
-    this.anims.create({
+    context.anims.create({
         key: 'right',
-        frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+        frames: context.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
         frameRate: 10,
         repeat: -1
     });
 
     //  Input Events
-    cursors = this.input.keyboard.createCursorKeys();
-    var sprite = this.add.sprite(400, 300, 'eye').setInteractive().on('pointerdown', () => startGame(this) );
-}
-
-function startGame (context)
-{
-    //  A simple background for our game
-    context.add.image(400, 300, 'sky');
+    cursors = context.input.keyboard.createCursorKeys();
 
     //  The platforms group contains the ground and the 2 ledges we can jump on
     platforms = context.physics.add.staticGroup();
