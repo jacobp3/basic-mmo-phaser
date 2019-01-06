@@ -35,18 +35,23 @@ function preload ()
     this.load.image('star', 'assets/star.png');
     this.load.image('bomb', 'assets/bomb.png');
     this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-    this.load.image('eye', 'assets/sprites/button_sprite_sheet.png');
+    this.load.spritesheet('button', 'assets/sprites/button_sprite_sheet.png', { frameWidth: 193, frameHeight: 71 });
 }
 
 function create()
 {
-    var sprite = this.add.sprite(400, 300, 'eye').setInteractive().on('pointerdown', () => startGame(this) );
+    var button0 = this.add.sprite(400, 300, 'button').setInteractive().on('pointerdown', () => startGame(this) );
+    button0.setFrame(0);
+    var button1 = this.add.sprite(400, 400, 'button').setInteractive().on('pointerdown', () => startGame(this) );
+    button1.setFrame(1);
+    var button2 = this.add.sprite(400, 500, 'button').setInteractive().on('pointerdown', () => startGame(this) );
+    button2.setFrame(2);
 }
 
 function startGame (context)
 {
     gameOver = false;
-    
+
     //  A simple background for our game
     context.add.image(400, 300, 'sky');
 
