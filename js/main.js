@@ -40,30 +40,6 @@ function preload ()
 
 function create()
 {
-  var sprite = this.add.sprite(400, 300, 'eye').setInteractive();
-
-  sprite.on('pointerdown', function (event) {
-    startGame();
-  });
-}
-
-function startGame ()
-{
-    //  A simple background for our game
-    this.add.image(400, 300, 'sky');
-
-    //  The platforms group contains the ground and the 2 ledges we can jump on
-    platforms = this.physics.add.staticGroup();
-
-    //  Here we create the ground.
-    //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-    platforms.create(400, 568, 'ground').setScale(2).refreshBody();
-
-    //  Now let's create some ledges
-    platforms.create(600, 400, 'ground');
-    platforms.create(50, 250, 'ground');
-    platforms.create(750, 220, 'ground');
-
     // The player and its settings
     player = this.physics.add.sprite(100, 450, 'dude');
 
@@ -94,9 +70,28 @@ function startGame ()
 
     //  Input Events
     cursors = this.input.keyboard.createCursorKeys();
+    var sprite = this.add.sprite(400, 300, 'eye').setInteractive().on('pointerdown', () => startGame(this) );
+}
+
+function startGame (context)
+{
+    //  A simple background for our game
+    context.add.image(400, 300, 'sky');
+
+    //  The platforms group contains the ground and the 2 ledges we can jump on
+    platforms = context.physics.add.staticGroup();
+
+    //  Here we create the ground.
+    //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
+    platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+
+    //  Now let's create some ledges
+    platforms.create(600, 400, 'ground');
+    platforms.create(50, 250, 'ground');
+    platforms.create(750, 220, 'ground');
 
     //  Some stars to collect, 12 in total, evenly spaced 70 pixels apart along the x axis
-    stars = this.physics.add.group({
+    stars = context.physics.add.group({
         key: 'star',
         repeat: 11,
         setXY: { x: 12, y: 0, stepX: 70 }
@@ -109,20 +104,20 @@ function startGame ()
 
     });
 
-    bombs = this.physics.add.group();
+    bombs = context.physics.add.group();
 
     //  The score
-    scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    scoreText = context.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
 
     //  Collide the player and the stars with the platforms
-    this.physics.add.collider(player, platforms);
-    this.physics.add.collider(stars, platforms);
-    this.physics.add.collider(bombs, platforms);
+    context.physics.add.collider(player, platforms);
+    context.physics.add.collider(stars, platforms);
+    context.physics.add.collider(bombs, platforms);
 
     //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
-    this.physics.add.overlap(player, stars, collectStar, null, this);
+    context.physics.add.overlap(player, stars, collectStar, null, context);
 
-    this.physics.add.collider(player, bombs, hitBomb, null, this);
+    context.physics.add.collider(player, bombs, hitBomb, null, context);
 }
 
 function update ()
