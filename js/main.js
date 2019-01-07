@@ -40,33 +40,44 @@ function preload ()
     this.load.spritesheet('button', 'assets/sprites/button_sprite_sheet.png', { frameWidth: 193, frameHeight: 71 });
 }
 
+var button0, button1, button2;
+
 function create()
 {
-    var button0 = this.add.sprite(400, 300, 'button').setInteractive().on('pointerdown', () => startGame0(this) );
-    button0.setFrame(0);
-    var button1 = this.add.sprite(400, 400, 'button').setInteractive().on('pointerdown', () => startGame1(this) );
-    button1.setFrame(1);
-    var button2 = this.add.sprite(400, 500, 'button').setInteractive().on('pointerdown', () => startGame2(this) );
-    button2.setFrame(2);
+    button0 = this.add.sprite(400, 300, 'button', 0).setInteractive().on('pointerdown', () => startGame0(this) );
+    button1 = this.add.sprite(400, 400, 'button', 1).setInteractive().on('pointerdown', () => startGame1(this) );
+    button2 = this.add.sprite(400, 500, 'button', 2).setInteractive().on('pointerdown', () => startGame2(this) );
 }
 
 function startGame2 (context)
 {
 }
 
-var g1b0;
-var g1b1;
+var g1b0, g1b1;
 
 function startGame1 (context)
 {
+    button0.destroy();
+    button1.destroy();
+    button2.destroy();
     //  A simple background for our game
-    context.add.image(400, 300, 'sky');
+    var background = context.add.image(400, 300, 'sky');
+//    background.inputEnabled = true;
+//    background.events.onInputUp.add(Game.getCoordinates, context);
+
+//    context.debug.inputInfo(32, 32);
+
+    background.setInteractive();
+    background.on('pointerdown', getCoordinates, context);
 
     g1b0 = context.add.sprite(400, 300, 'button').setInteractive().on('pointerdown', () => publicDisplay(context) );
     g1b0.setFrame(0);
 
     g1b1 = context.add.sprite(400, 400, 'button').setInteractive().on('pointerdown', () => privateDisplay(context) );
     g1b0.setFrame(1);
+
+//    var testKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+//    testKey.onDown.add(Client.sendTest, this);
 }
 
 function publicDisplay (context)
@@ -84,6 +95,10 @@ function privateDisplay (context)
 
 function startGame0 (context)
 {
+    button0.destroy();
+    button1.destroy();
+    button2.destroy();
+
     gameOver = false;
 
     //  A simple background for our game
@@ -233,6 +248,11 @@ function hitBomb (player, bomb)
     gameOver = true;
 }
 
+function getCoordinates (layer,pointer){
+    console.log(gameContext.input.mousePointer.x);
+    Client.sendClick(gameContext.input.mousePointer.x,gameContext.input.mousePointer.y);
+}
+
 var playerMap = {};
 
 function addNewPlayer (id,x,y){
@@ -241,8 +261,10 @@ function addNewPlayer (id,x,y){
 
 function movePlayer (id,x,y){
     var player = playerMap[id];
-    var distance = Phaser.Math.distance(player.x,player.y,x,y);
-    var tween = game.add.tween(player);
+    var distance = Phaser.Math.Distance.Between(player.x,player.y,x,y);
+    console.log(distance);
+    console.log(player);
+    var tween = gameContext.add.tween(player);
     var duration = distance*10;
     tween.to({x:x,y:y}, duration);
     tween.start();
