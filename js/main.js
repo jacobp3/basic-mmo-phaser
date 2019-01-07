@@ -25,11 +25,13 @@ var cursors;
 var score = 0;
 var gameOver = true;
 var scoreText;
+var gameContext;
 
 var game = new Phaser.Game(config);
 
 function preload ()
 {
+    gameContext = this;
     this.load.image('sky', 'assets/sky.png');
     this.load.image('ground', 'assets/platform.png');
     this.load.image('star', 'assets/star.png');
@@ -40,15 +42,47 @@ function preload ()
 
 function create()
 {
-    var button0 = this.add.sprite(400, 300, 'button').setInteractive().on('pointerdown', () => startGame(this) );
+    var button0 = this.add.sprite(400, 300, 'button').setInteractive().on('pointerdown', () => startGame0(this) );
     button0.setFrame(0);
-    var button1 = this.add.sprite(400, 400, 'button').setInteractive().on('pointerdown', () => startGame(this) );
+    var button1 = this.add.sprite(400, 400, 'button').setInteractive().on('pointerdown', () => startGame1(this) );
     button1.setFrame(1);
-    var button2 = this.add.sprite(400, 500, 'button').setInteractive().on('pointerdown', () => startGame(this) );
+    var button2 = this.add.sprite(400, 500, 'button').setInteractive().on('pointerdown', () => startGame2(this) );
     button2.setFrame(2);
 }
 
-function startGame (context)
+function startGame2 (context)
+{
+}
+
+var g1b0;
+var g1b1;
+
+function startGame1 (context)
+{
+    //  A simple background for our game
+    context.add.image(400, 300, 'sky');
+
+    g1b0 = context.add.sprite(400, 300, 'button').setInteractive().on('pointerdown', () => publicDisplay(context) );
+    g1b0.setFrame(0);
+
+    g1b1 = context.add.sprite(400, 400, 'button').setInteractive().on('pointerdown', () => privateDisplay(context) );
+    g1b0.setFrame(1);
+}
+
+function publicDisplay (context)
+{
+    g1b0.destroy();
+    g1b1.destroy();
+}
+
+function privateDisplay (context)
+{
+    g1b0.destroy();
+    g1b1.destroy();
+    Client.askNewPlayer();
+}
+
+function startGame0 (context)
 {
     gameOver = false;
 
@@ -197,4 +231,24 @@ function hitBomb (player, bomb)
     player.anims.play('turn');
 
     gameOver = true;
+}
+
+var playerMap = {};
+
+function addNewPlayer (id,x,y){
+    playerMap[id] = gameContext.add.sprite(x,y,'dude');
+}
+
+function movePlayer (id,x,y){
+    var player = playerMap[id];
+    var distance = Phaser.Math.distance(player.x,player.y,x,y);
+    var tween = game.add.tween(player);
+    var duration = distance*10;
+    tween.to({x:x,y:y}, duration);
+    tween.start();
+}
+
+function removePlayer (id){
+    playerMap[id].destroy();
+    delete playerMap[id];
 }
