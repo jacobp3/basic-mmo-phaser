@@ -62,10 +62,6 @@ function startGame1 (context)
     button2.destroy();
     //  A simple background for our game
     var background = context.add.image(400, 300, 'sky');
-//    background.inputEnabled = true;
-//    background.events.onInputUp.add(Game.getCoordinates, context);
-
-//    context.debug.inputInfo(32, 32);
 
     background.setInteractive();
     background.on('pointerdown', getCoordinates, context);
@@ -75,9 +71,6 @@ function startGame1 (context)
 
     g1b1 = context.add.sprite(400, 400, 'button').setInteractive().on('pointerdown', () => privateDisplay(context) );
     g1b0.setFrame(1);
-
-//    var testKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
-//    testKey.onDown.add(Client.sendTest, this);
 }
 
 function publicDisplay (context)
@@ -249,8 +242,7 @@ function hitBomb (player, bomb)
 }
 
 function getCoordinates (layer,pointer){
-    console.log(gameContext.input.mousePointer.x);
-    Client.sendClick(gameContext.input.mousePointer.x,gameContext.input.mousePointer.y);
+    Client.sendClick(gameContext.input.activePointer.x,gameContext.input.activePointer.y);
 }
 
 var playerMap = {};
