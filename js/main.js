@@ -262,12 +262,12 @@ function addNewPlayer (id,x,y){
 function movePlayer (id,x,y){
     var player = playerMap[id];
     var distance = Phaser.Math.Distance.Between(player.x,player.y,x,y);
-    console.log(distance);
-    console.log(player);
-    var tween = gameContext.add.tween(player);
-    var duration = distance*10;
-    tween.to({x:x,y:y}, duration);
-    tween.start();
+    var tween = gameContext.tweens.add({
+        targets: player,
+        x:x,
+        y:y,
+        duration:distance*10
+    });
 }
 
 function removePlayer (id){
