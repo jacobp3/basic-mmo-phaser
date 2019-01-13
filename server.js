@@ -30,10 +30,23 @@ io.on('connection',function(socket){
 
         socket.on('click',function(data){
             console.log('click to '+data.x+', '+data.y);
-            socket.player.x = data.x;
-            socket.player.y = data.y;
+            socket.player.x = socket.player.x + data.x;
+            socket.player.y = socket.player.y + data.y;
+            console.log('move to: ' + socket.player.x + ', ' + socket.player.y)
             io.emit('move',socket.player);
         });
+
+        socket.on('disconnect',function(){
+            io.emit('remove',socket.player.id);
+        });
+    });
+
+    socket.on('newhost',function(){
+        socket.player = {
+            id: server.lastPlayerID++,
+            public: true
+        };
+        socket.emit('allplayers',getAllPlayers());
 
         socket.on('disconnect',function(){
             io.emit('remove',socket.player.id);

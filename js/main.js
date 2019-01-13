@@ -53,18 +53,17 @@ function startGame2 (context)
 {
 }
 
-var g1b0, g1b1;
+var g1b0, g1b1, downX, upX, downY, upY, threshold = 50, public = false, background;
+
 
 function startGame1 (context)
 {
     button0.destroy();
     button1.destroy();
     button2.destroy();
-    //  A simple background for our game
-    var background = context.add.image(400, 300, 'sky');
 
-    background.setInteractive();
-    background.on('pointerdown', getCoordinates, context);
+    //  A simple background for our game
+    background = context.add.image(400, 300, 'sky');
 
     g1b0 = context.add.sprite(400, 300, 'button').setInteractive().on('pointerdown', () => publicDisplay(context) );
     g1b0.setFrame(0);
@@ -75,12 +74,31 @@ function startGame1 (context)
 
 function publicDisplay (context)
 {
+    public = true;
     g1b0.destroy();
     g1b1.destroy();
+    Client.askNewHost();
 }
 
 function privateDisplay (context)
 {
+    background.setInteractive();
+//    background.on('pointerdown', getCoordinates, context);
+    background.on('pointerdown', function (pointer) {
+      	downX = pointer.x;
+      	downY = pointer.y;
+    });
+
+    background.on('pointerup', function (pointer) {
+        distX = pointer.x - downX;
+      	distY = pointer.y - downY;
+        dist = Math.sqrt(distX*distX + distY*distY);
+        if (dist > threshold) {
+//            angle = Math.atan2(distY, distX);
+            Client.sendClick(distX,distY);
+        }
+    });
+
     g1b0.destroy();
     g1b1.destroy();
     Client.askNewPlayer();
@@ -241,18 +259,18 @@ function hitBomb (player, bomb)
     gameOver = true;
 }
 
-function getCoordinates (layer,pointer){
-    Client.sendClick(gameContext.input.activePointer.x,gameContext.input.activePointer.y);
-}
-
 var playerMap = {};
 
 function addNewPlayer (id,x,y){
     playerMap[id] = gameContext.add.sprite(x,y,'dude');
+    if (!public) {
+        playerMap[id].visible = false;
+    }
 }
 
 function movePlayer (id,x,y){
     var player = playerMap[id];
+    console.log('started at: ' + player.x + ', ' + player.y + ' moving to: ' + x + ', ' + y)
     var distance = Phaser.Math.Distance.Between(player.x,player.y,x,y);
     var tween = gameContext.tweens.add({
         targets: player,
