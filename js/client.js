@@ -5,11 +5,6 @@
 var Client = {};
 Client.socket = io.connect();
 
-Client.sendTest = function(){
-    console.log("test sent");
-    Client.socket.emit('test');
-};
-
 Client.askNewPlayer = function(){
     Client.socket.emit('newplayer');
 };
@@ -34,12 +29,10 @@ Client.socket.on('allplayers',function(data){
     }
 
     Client.socket.on('move',function(data){
-        console.log('got move emission')
         movePlayer(data.id,data.x,data.y);
     });
 
     Client.socket.on('remove',function(id){
-        console.log('got remove emission')
         removePlayer(id);
     });
 });

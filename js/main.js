@@ -270,7 +270,6 @@ function addNewPlayer (id,x,y){
 
 function movePlayer (id,x,y){
     var player = playerMap[id];
-    console.log('started at: ' + player.x + ', ' + player.y + ' moving to: ' + x + ', ' + y)
     var distance = Phaser.Math.Distance.Between(player.x,player.y,x,y);
     var tween = gameContext.tweens.add({
         targets: player,
