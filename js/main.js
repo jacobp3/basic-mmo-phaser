@@ -6,7 +6,7 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 300 },
+//            gravity: { y: 300 },
             debug: false
         }
     },
@@ -36,6 +36,8 @@ function preload ()
     this.load.image('ground', 'assets/platform.png');
     this.load.image('star', 'assets/star.png');
     this.load.image('bomb', 'assets/bomb.png');
+    this.load.image('pie1', 'assets/pie1.png');
+    this.load.image('pie2', 'assets/pie2.png');
     this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
     this.load.spritesheet('button', 'assets/sprites/button_sprite_sheet.png', { frameWidth: 193, frameHeight: 71 });
 }
@@ -44,6 +46,8 @@ var button0, button1, button2;
 
 function create()
 {
+//    pie1 = this.add.sprite(200, 100, 'pie1').setScale(.2);
+//    pie2 = this.add.sprite(400, 100, 'pie2').setScale(.2);
     button0 = this.add.sprite(400, 300, 'button', 0).setInteractive().on('pointerdown', () => startGame0(this) );
     button1 = this.add.sprite(400, 400, 'button', 1).setInteractive().on('pointerdown', () => startGame1(this) );
     button2 = this.add.sprite(400, 500, 'button', 2).setInteractive().on('pointerdown', () => startGame2(this) );
@@ -53,7 +57,7 @@ function startGame2 (context)
 {
 }
 
-var g1b0, g1b1, downX, upX, downY, upY, threshold = 50, public = false, background;
+var g1b0, g1b1, lastX, lastY, nowX, nowY, startTime, lastTime, currentTime, threshold = 50, public = false, background, pie1;
 
 
 function startGame1 (context)
@@ -82,22 +86,59 @@ function publicDisplay (context)
 
 function privateDisplay (context)
 {
-    background.setInteractive();
-//    background.on('pointerdown', getCoordinates, context);
-    background.on('pointerdown', function (pointer) {
-      	downX = pointer.x;
-      	downY = pointer.y;
-    });
+    pie1 = gameContext.physics.add.sprite(400, 500, 'pie1').setScale(.2);
+    pie1.setInteractive();
+    gameContext.input.setDraggable(pie1);
 
-    background.on('pointerup', function (pointer) {
-        distX = pointer.x - downX;
-      	distY = pointer.y - downY;
-        dist = Math.sqrt(distX*distX + distY*distY);
-        if (dist > threshold) {
-//            angle = Math.atan2(distY, distX);
-            Client.sendClick(distX,distY);
+    gameContext.input.on('dragstart', function (pointer, gameObject) {
+
+        gameObject.setVelocityX(0);
+        gameObject.setVelocityY(0);
+        currentTime = new Date().getTime();
+        startTime = currentTime;
+        gameContext.children.bringToTop(gameObject);
+
+    }, gameContext);
+
+    gameContext.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+
+        gameObject.x = dragX;
+        gameObject.y = dragY;
+        t = new Date().getTime();
+        if (t - currentTime >= 10) {
+            lastTime = currentTime;
+            currentTime = t;
+            lastX = nowX;
+            lastY = nowY;
+            nowX = dragX;
+            nowY = dragY;
         }
     });
+
+    gameContext.input.on('dragend', function (pointer, gameObject) {
+
+        t = new Date().getTime();
+        if (t - startTime >= 200) {
+            gameObject.setVelocityX((nowX - lastX)*10);
+            gameObject.setVelocityY((nowY - lastY)*10);
+        }
+    }, gameContext);
+
+//    background.on('pointerdown', getCoordinates, context);
+//    pie1.on('pointerdown', function (pointer) {
+//      	downX = pointer.x;
+//      	downY = pointer.y;
+//    });
+
+//    pie1.on('pointerup', function (pointer) {
+//        distX = pointer.x - downX;
+//      	distY = pointer.y - downY;
+//        dist = Math.sqrt(distX*distX + distY*distY);
+//        if (dist > threshold) {
+//            angle = Math.atan2(distY, distX);
+//            Client.sendClick(distX,distY);
+//        }
+//    });
 
     g1b0.destroy();
     g1b1.destroy();
@@ -190,6 +231,23 @@ function startGame0 (context)
 
 function update ()
 {
+    if (typeof(pie1) !== 'undefined') {
+        if (pie1.y < -200) {
+            Client.sendClick((nowX - lastX)*10,(nowY - lastY)*10);
+            pie1.x = 400;
+            pie1.y = 500;
+            pie1.setVelocityX(0);
+            pie1.setVelocityY(0);
+        }
+
+        if (pie1.x < -200 || pie1.x > 1000 || pie1.y > 1000) {
+            pie1.x = 400;
+            pie1.y = 500;
+            pie1.setVelocityX(0);
+            pie1.setVelocityY(0);
+        }
+    }
+
     if (gameOver)
     {
         return;
