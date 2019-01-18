@@ -13,8 +13,9 @@ Client.askNewHost = function(){
     Client.socket.emit('newhost');
 };
 
-Client.sendClick = function(x,y){
-  Client.socket.emit('click',{x:x,y:y});
+Client.sendPie = function(x,xVel,yVel){
+    console.log("x: " + x + ", xVel: " + xVel + ", yVel: " + yVel);
+    Client.socket.emit('piethrow',{x:x,xVel:xVel,yVel:yVel});
 };
 
 Client.socket.on('newplayer',function(data){
@@ -28,8 +29,9 @@ Client.socket.on('allplayers',function(data){
         }
     }
 
-    Client.socket.on('move',function(data){
-        movePlayer(data.id,data.x,data.y);
+    Client.socket.on('piecatch',function(data){
+        console.log(data);
+        publicPie(data.x,data.xVel,data.yVel);
     });
 
     Client.socket.on('remove',function(id){

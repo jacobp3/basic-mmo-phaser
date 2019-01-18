@@ -124,22 +124,6 @@ function privateDisplay (context)
         }
     }, gameContext);
 
-//    background.on('pointerdown', getCoordinates, context);
-//    pie1.on('pointerdown', function (pointer) {
-//      	downX = pointer.x;
-//      	downY = pointer.y;
-//    });
-
-//    pie1.on('pointerup', function (pointer) {
-//        distX = pointer.x - downX;
-//      	distY = pointer.y - downY;
-//        dist = Math.sqrt(distX*distX + distY*distY);
-//        if (dist > threshold) {
-//            angle = Math.atan2(distY, distX);
-//            Client.sendClick(distX,distY);
-//        }
-//    });
-
     g1b0.destroy();
     g1b1.destroy();
     Client.askNewPlayer();
@@ -233,7 +217,7 @@ function update ()
 {
     if (typeof(pie1) !== 'undefined') {
         if (pie1.y < -200) {
-            Client.sendClick((nowX - lastX)*10,(nowY - lastY)*10);
+            Client.sendPie(nowX, (nowX - lastX)*10,(nowY - lastY)*10);
             pie1.x = 400;
             pie1.y = 500;
             pie1.setVelocityX(0);
@@ -321,20 +305,26 @@ var playerMap = {};
 
 function addNewPlayer (id,x,y){
     playerMap[id] = gameContext.add.sprite(x,y,'dude');
-    if (!public) {
+//    if (!public) {
         playerMap[id].visible = false;
-    }
+//    }
 }
 
-function movePlayer (id,x,y){
-    var player = playerMap[id];
-    var distance = Phaser.Math.Distance.Between(player.x,player.y,x,y);
-    var tween = gameContext.tweens.add({
-        targets: player,
-        x:x,
-        y:y,
-        duration:distance*10
-    });
+function publicPie (x,xVel,yVel) { //need player id to set color/type
+    if (public) {
+        var pie = gameContext.physics.add.sprite(x, 800, 'pie1').setScale(.2);
+        pie.setVelocityX(xVel);
+        pie.setVelocityY(yVel);
+        pie.setDrag(50, 50);
+    }
+//    var player = playerMap[id];
+//    var distance = Phaser.Math.Distance.Between(player.x,player.y,x,y);
+//    var tween = gameContext.tweens.add({
+//        targets: player,
+//        x:x,
+//        y:y,
+//        duration:distance*10
+//    });
 }
 
 function removePlayer (id){

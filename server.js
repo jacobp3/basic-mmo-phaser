@@ -28,10 +28,11 @@ io.on('connection',function(socket){
         socket.emit('allplayers',getAllPlayers());
         socket.broadcast.emit('newplayer',socket.player);
 
-        socket.on('click',function(data){
-            socket.player.x = socket.player.x + data.x;
-            socket.player.y = socket.player.y + data.y;
-            io.emit('move',socket.player);
+        socket.on('piethrow',function(data){
+//            socket.player.x = socket.player.x + data.x;
+//            socket.player.y = socket.player.y + data.y;
+            console.log(data);
+            io.emit('piecatch',data);
         });
 
         socket.on('disconnect',function(){
