@@ -32,6 +32,7 @@ io.on('connection',function(socket){
                 break;
             }
         }
+
         socket.player = {
             id: server.lastPlayerID++,
             x: randomInt(100,400),
@@ -40,6 +41,7 @@ io.on('connection',function(socket){
             name: textEntry
         };
 
+        console.log(socket.player);
 //        socket.join(textEntry);
 
         socket.emit('allplayers',getAllPlayers());
