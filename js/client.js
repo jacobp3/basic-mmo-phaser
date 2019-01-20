@@ -31,7 +31,7 @@ Client.socket.on('allplayers',function(data){
 
     Client.socket.on('piecatch',function(data){
         console.log(data);
-        publicPie(data.x,data.xVel,data.yVel);
+        publicPie(data.x,data.xVel,data.yVel,data.color);
     });
 
     Client.socket.on('remove',function(id){

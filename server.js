@@ -55,6 +55,7 @@ io.on('connection',function(socket){
 //            socket.player.x = socket.player.x + data.x;
 //            socket.player.y = socket.player.y + data.y;
             console.log(data);
+            data.color = socket.player.color;
             io.emit('piecatch',data);
         });
 

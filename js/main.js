@@ -222,7 +222,7 @@ function update ()
     if (typeof(pie1) !== 'undefined') {
         if (pie1.y < -200 || pie1.x < -200 || pie1.x > 1000 || pie1.y > 1000) {
             if (pie1.y < -200) {
-                Client.sendPie(nowX, (nowX - lastX)*10,(nowY - lastY)*10);
+                Client.sendPie(nowX, (nowX - lastX)*10, (nowY - lastY)*10);
             }
             pie1.x = 400;
             pie1.y = 500;
@@ -308,9 +308,9 @@ function addNewPlayer (id,x,y,color,name) {
     playerMap[id].visible = false;
 }
 
-function publicPie (x,xVel,yVel) { //need player id to set color/type
+function publicPie (x,xVel,yVel,color) { //need player id to set color/type
     if (public) {
-        var pie = gameContext.physics.add.sprite(x, 800, 'pie1').setScale(.2);
+        var pie = gameContext.physics.add.sprite(x, 800, 'pie1').setScale(.2).setTint(color);
         pie.setVelocityX(xVel);
         pie.setVelocityY(yVel);
         pie.setDrag(50, 50);
