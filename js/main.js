@@ -88,8 +88,8 @@ function privateDisplay (context)
 }
 
 function activatePlayer(color,name) {
-    myName = data.name;
-    myColor = data.color;
+    myName = name;
+    myColor = color;
     pie1 = gameContext.physics.add.sprite(400, 500, 'pie1').setScale(.2).setTint(myColor);
     pie1.setInteractive();
     gameContext.input.setDraggable(pie1);
