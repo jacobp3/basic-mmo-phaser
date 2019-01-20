@@ -58,7 +58,7 @@ io.on('connection',function(socket){
 
         socket.on('disconnect',function(){
             io.emit('remove',socket.player.id);
-            usedColors.remove(socket.player.color);
+            usedColors.splice(usedColors.indexOf(socket.player.color),1);
         });
     });
 
