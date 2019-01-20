@@ -26,7 +26,9 @@ io.on('connection',function(socket){
     socket.on('newplayer',function(textEntry){
         var thisColor;
         for (c in colors) {
+            console.log("test1" + c);
             if (!usedColors.includes(c)) {
+                console.log("test2" + c);
                 thisColor = c;
                 usedColors.push(c);
                 break;
