@@ -25,15 +25,15 @@ server.listen(process.env.PORT || 8081,function(){
 io.on('connection',function(socket){
     socket.on('newplayer',function(textEntry){
         var thisColor;
-        colors.forEach(c => {
-            console.log("test1" + c);
-            if (!usedColors.includes(c)) {
-                console.log("test2" + c);
-                thisColor = c;
-                usedColors.push(c);
+        for (c in colors) {
+            console.log("test1" + colors[c]);
+            if (!usedColors.includes(colors[c])) {
+                console.log("test2" + colors[c]);
+                thisColor = colors[c];
+                usedColors.push(colors[c]);
                 break;
             }
-        })
+        }
         console.log("thisColor: " + thisColor);
         socket.player = {
             id: server.lastPlayerID++,
