@@ -1,4 +1,3 @@
-
 var config = {
     type: Phaser.AUTO,
     width: 800,
@@ -6,7 +5,6 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-//            gravity: { y: 300 },
             debug: false
         }
     },
@@ -17,17 +15,7 @@ var config = {
     }
 };
 
-var player;
-var stars;
-var bombs;
-var platforms;
-var cursors;
-var score = 0;
-var gameOver = true;
-var scoreText;
-var gameContext;
-
-var game = new Phaser.Game(config);
+var player, stars, bombs, platforms, cursors, score = 0, gameOver = true, scoreText, gameContext, g1b0, g1b1, lastX, lastY, nowX, nowY, startTime, lastTime, currentTime, threshold = 50, public = false, background, pie1, button0, button1, button2, game = new Phaser.Game(config);
 
 function preload ()
 {
@@ -38,42 +26,28 @@ function preload ()
     this.load.image('bomb', 'assets/bomb.png');
     this.load.image('pie1', 'assets/pie1.png');
     this.load.image('pie2', 'assets/pie2.png');
+    this.load.image('newgame', 'assets/newgame2.png');
+    this.load.image('mainscreen', 'assets/mainscreen.png');
+    this.load.image('handheld', 'assets/handheld.png');
     this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-    this.load.spritesheet('button', 'assets/sprites/button_sprite_sheet.png', { frameWidth: 193, frameHeight: 71 });
+//    this.load.spritesheet('button', 'assets/sprites/button_sprite_sheet.png', { frameWidth: 193, frameHeight: 71 });
 }
-
-var button0, button1, button2;
 
 function create()
 {
-//    pie1 = this.add.sprite(200, 100, 'pie1').setScale(.2);
-//    pie2 = this.add.sprite(400, 100, 'pie2').setScale(.2);
-    button0 = this.add.sprite(400, 300, 'button', 0).setInteractive().on('pointerdown', () => startGame0(this) );
-    button1 = this.add.sprite(400, 400, 'button', 1).setInteractive().on('pointerdown', () => startGame1(this) );
-    button2 = this.add.sprite(400, 500, 'button', 2).setInteractive().on('pointerdown', () => startGame2(this) );
+    button1 = this.add.sprite(400, 300, 'newgame').setInteractive().on('pointerdown', () => startGame1(this) );
 }
-
-function startGame2 (context)
-{
-}
-
-var g1b0, g1b1, lastX, lastY, nowX, nowY, startTime, lastTime, currentTime, threshold = 50, public = false, background, pie1;
-
 
 function startGame1 (context)
 {
-    button0.destroy();
-    button1.destroy();
-    button2.destroy();
+    button1.visible = false;
+    button1.y = -500
 
     //  A simple background for our game
     background = context.add.image(400, 300, 'sky');
 
-    g1b0 = context.add.sprite(400, 300, 'button').setInteractive().on('pointerdown', () => publicDisplay(context) );
-    g1b0.setFrame(0);
-
-    g1b1 = context.add.sprite(400, 400, 'button').setInteractive().on('pointerdown', () => privateDisplay(context) );
-    g1b0.setFrame(1);
+    g1b0 = context.add.sprite(400, 300, 'mainscreen').setInteractive().on('pointerdown', () => publicDisplay(context) );
+    g1b1 = context.add.sprite(400, 500, 'handheld').setInteractive().on('pointerdown', () => privateDisplay(context) );
 }
 
 function publicDisplay (context)
@@ -81,6 +55,8 @@ function publicDisplay (context)
     public = true;
     g1b0.destroy();
     g1b1.destroy();
+    scoreText = context.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+//    scoreText.setText('Score: ' + score);
     Client.askNewHost();
 }
 
@@ -128,7 +104,7 @@ function privateDisplay (context)
     g1b1.destroy();
     Client.askNewPlayer();
 }
-
+/*
 function startGame0 (context)
 {
     button0.destroy();
@@ -211,27 +187,22 @@ function startGame0 (context)
     context.physics.add.overlap(player, stars, collectStar, null, context);
 
     context.physics.add.collider(player, bombs, hitBomb, null, context);
-}
+}*/
 
 function update ()
 {
     if (typeof(pie1) !== 'undefined') {
-        if (pie1.y < -200) {
-            Client.sendPie(nowX, (nowX - lastX)*10,(nowY - lastY)*10);
-            pie1.x = 400;
-            pie1.y = 500;
-            pie1.setVelocityX(0);
-            pie1.setVelocityY(0);
-        }
-
-        if (pie1.x < -200 || pie1.x > 1000 || pie1.y > 1000) {
+        if (pie1.y < -200 || pie1.x < -200 || pie1.x > 1000 || pie1.y > 1000) {
+            if (pie1.y < -200) {
+                Client.sendPie(nowX, (nowX - lastX)*10,(nowY - lastY)*10);
+            }
             pie1.x = 400;
             pie1.y = 500;
             pie1.setVelocityX(0);
             pie1.setVelocityY(0);
         }
     }
-
+/*
     if (gameOver)
     {
         return;
@@ -260,8 +231,9 @@ function update ()
     {
         player.setVelocityY(-330);
     }
+*/
 }
-
+/*
 function collectStar (player, star)
 {
     star.disableBody(true, true);
@@ -300,7 +272,7 @@ function hitBomb (player, bomb)
 
     gameOver = true;
 }
-
+*/
 var playerMap = {};
 
 function addNewPlayer (id,x,y){
