@@ -15,7 +15,7 @@ var config = {
     }
 };
 
-var player, stars, bombs, platforms, cursors, score = 0, gameOver = true, scoreText, gameContext, g1b0, g1b1, lastX, lastY, nowX, nowY, startTime, lastTime, currentTime, threshold = 50, public = false, background, pie1, button0, button1, button2, game = new Phaser.Game(config);
+var player, stars, bombs, platforms, cursors, score = 0, gameOver = true, scoreText, gameContext, g1b0, g1b1, lastX, lastY, nowX, nowY, startTime, lastTime, currentTime, threshold = 50, public = false, background, pie1, button0, button1, button2, game = new Phaser.Game(config), myName, myColor;
 
 function preload ()
 {
@@ -62,9 +62,39 @@ function publicDisplay (context)
 
 function privateDisplay (context)
 {
-    pie1 = gameContext.physics.add.sprite(400, 500, 'pie1').setScale(.2);
+    g1b0.destroy();
+    g1b1.destroy();
+
+    gameContext.add.text(400, 300, 'Enter your name:', { font: '32px Courier', fill: '#ffffff' });
+    var textEntry = this.add.text(400, 400, '', { font: '32px Courier', fill: '#ffff00' });
+
+//    keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+//    keyBackspace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.BACKSPACE);
+
+    this.input.keyboard.on('keydown', function (event) {
+        if (event.keyCode === 8 && textEntry.text.length > 0)
+        {
+            textEntry.text = textEntry.text.substr(0, textEntry.text.length - 1);
+        }
+        else if (event.keyCode === 32 || (event.keyCode >= 48 && event.keyCode < 90))
+        {
+            textEntry.text += event.key;
+        }
+        else if (event.keyCode === 13)
+        {
+            Client.askNewPlayer(textEntry);
+        }
+    });
+}
+
+function activatePlayer(color,name) {
+    myName = data.name;
+    myColor = data.color;
+    pie1 = gameContext.physics.add.sprite(400, 500, 'pie1').setScale(.2).setTint(myColor);
     pie1.setInteractive();
     gameContext.input.setDraggable(pie1);
+
+    this.add.text(400, 700, myName, { font: '32px Courier', fill: '#ffff00' });
 
     gameContext.input.on('dragstart', function (pointer, gameObject) {
 
@@ -99,11 +129,8 @@ function privateDisplay (context)
             gameObject.setVelocityY((nowY - lastY)*10);
         }
     }, gameContext);
-
-    g1b0.destroy();
-    g1b1.destroy();
-    Client.askNewPlayer();
 }
+
 /*
 function startGame0 (context)
 {
@@ -275,11 +302,9 @@ function hitBomb (player, bomb)
 */
 var playerMap = {};
 
-function addNewPlayer (id,x,y){
+function addNewPlayer (id,x,y,color,name) {
     playerMap[id] = gameContext.add.sprite(x,y,'dude');
-//    if (!public) {
-        playerMap[id].visible = false;
-//    }
+    playerMap[id].visible = false;
 }
 
 function publicPie (x,xVel,yVel) { //need player id to set color/type
@@ -289,14 +314,6 @@ function publicPie (x,xVel,yVel) { //need player id to set color/type
         pie.setVelocityY(yVel);
         pie.setDrag(50, 50);
     }
-//    var player = playerMap[id];
-//    var distance = Phaser.Math.Distance.Between(player.x,player.y,x,y);
-//    var tween = gameContext.tweens.add({
-//        targets: player,
-//        x:x,
-//        y:y,
-//        duration:distance*10
-//    });
 }
 
 function removePlayer (id){

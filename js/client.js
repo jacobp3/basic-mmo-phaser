@@ -1,12 +1,8 @@
-/**
- * Created by Jerome on 03-03-17.
- */
-
 var Client = {};
 Client.socket = io.connect();
 
-Client.askNewPlayer = function(){
-    Client.socket.emit('newplayer');
+Client.askNewPlayer = function(textEntry){
+    Client.socket.emit('newplayer', textEntry);
 };
 
 Client.askNewHost = function(){
@@ -19,7 +15,11 @@ Client.sendPie = function(x,xVel,yVel){
 };
 
 Client.socket.on('newplayer',function(data){
-    addNewPlayer(data.id,data.x,data.y);
+    addNewPlayer(data.id,data.x,data.y,data.color,data.name);
+});
+
+Client.socket.on('yourdata',function(data){
+    activatePlayer(data.color, data.name);
 });
 
 Client.socket.on('allplayers',function(data){

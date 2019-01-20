@@ -2,6 +2,10 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io').listen(server);
+var hosts = [];
+
+// red, blue, green, deeppink, yellow, gray, orange, cyan, purple, brown
+var colors = [0xFF0000, 0x0000FF, 0x008000, 0xFF1493, 0xFFFF00, 0x808080, 0xFFA500, 0x00FFFF, 0x800080, 0xA52A2A ]
 
 app.use('/css',express.static(__dirname + '/css'));
 app.use('/js',express.static(__dirname + '/js'));
@@ -18,15 +22,21 @@ server.listen(process.env.PORT || 8081,function(){
 });
 
 io.on('connection',function(socket){
-
-    socket.on('newplayer',function(){
+    socket.on('newplayer',function(textEntry){
         socket.player = {
             id: server.lastPlayerID++,
             x: randomInt(100,400),
-            y: randomInt(100,400)
+            y: randomInt(100,400),
+            color: colors[id],
+            name: textEntry
         };
+
+//        socket.join(textEntry);
+
         socket.emit('allplayers',getAllPlayers());
         socket.broadcast.emit('newplayer',socket.player);
+        socket.emit('yourdata',socket.player);
+//        socket.broadcast.to(textEntry)
 
         socket.on('piethrow',function(data){
 //            socket.player.x = socket.player.x + data.x;
@@ -44,10 +54,15 @@ io.on('connection',function(socket){
         socket.player = {
             id: server.lastPlayerID++
         };
+        hosts.push(id);
+
         socket.emit('allplayers',getAllPlayers());
 
         socket.on('disconnect',function(){
             io.emit('remove',socket.player.id);
+            if(hosts.indexOf(id) >= 0) {
+                hosts.splice(hosts.indexOf(id), 1);
+            }
         });
     });
 });
