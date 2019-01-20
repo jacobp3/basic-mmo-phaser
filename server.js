@@ -5,7 +5,8 @@ var io = require('socket.io').listen(server);
 var hosts = [];
 
 // red, blue, green, deeppink, yellow, gray, orange, cyan, purple, brown
-var colors = [0xFF0000, 0x0000FF, 0x008000, 0xFF1493, 0xFFFF00, 0x808080, 0xFFA500, 0x00FFFF, 0x800080, 0xA52A2A ]
+var colors = [0xFF0000, 0x0000FF, 0x008000, 0xFF1493, 0xFFFF00, 0x808080, 0xFFA500, 0x00FFFF, 0x800080, 0xA52A2A ];
+var usedColors = [];
 
 app.use('/css',express.static(__dirname + '/css'));
 app.use('/js',express.static(__dirname + '/js'));
@@ -23,11 +24,19 @@ server.listen(process.env.PORT || 8081,function(){
 
 io.on('connection',function(socket){
     socket.on('newplayer',function(textEntry){
+        var thisColor;
+        for (c in colors) {
+            if (!usedColors.include(c)) {
+                thisColor = c;
+                usedColors.push(c);
+                break;
+            }
+        }
         socket.player = {
             id: server.lastPlayerID++,
             x: randomInt(100,400),
             y: randomInt(100,400),
-            color: colors[id],
+            color: thisColor,
             name: textEntry
         };
 
@@ -47,6 +56,7 @@ io.on('connection',function(socket){
 
         socket.on('disconnect',function(){
             io.emit('remove',socket.player.id);
+            usedColors.remove(socket.player.color);
         });
     });
 
