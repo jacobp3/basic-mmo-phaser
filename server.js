@@ -25,7 +25,7 @@ server.listen(process.env.PORT || 8081,function(){
 io.on('connection',function(socket){
     socket.on('newplayer',function(textEntry){
         var thisColor;
-        for (c in colors) {
+        colors.forEach(c => {
             console.log("test1" + c);
             if (!usedColors.includes(c)) {
                 console.log("test2" + c);
@@ -33,7 +33,7 @@ io.on('connection',function(socket){
                 usedColors.push(c);
                 break;
             }
-        }
+        })
         console.log("thisColor: " + thisColor);
         socket.player = {
             id: server.lastPlayerID++,
