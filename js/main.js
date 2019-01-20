@@ -66,12 +66,12 @@ function privateDisplay (context)
     g1b1.destroy();
 
     gameContext.add.text(400, 300, 'Enter your name:', { font: '32px Courier', fill: '#ffffff' });
-    var textEntry = this.add.text(400, 400, '', { font: '32px Courier', fill: '#ffff00' });
+    var textEntry = gameContext.add.text(400, 400, '', { font: '32px Courier', fill: '#ffff00' });
 
 //    keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 //    keyBackspace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.BACKSPACE);
 
-    this.input.keyboard.on('keydown', function (event) {
+    gameContext.input.keyboard.on('keydown', function (event) {
         if (event.keyCode === 8 && textEntry.text.length > 0)
         {
             textEntry.text = textEntry.text.substr(0, textEntry.text.length - 1);
@@ -94,7 +94,7 @@ function activatePlayer(color,name) {
     pie1.setInteractive();
     gameContext.input.setDraggable(pie1);
 
-    this.add.text(400, 700, myName, { font: '32px Courier', fill: '#ffff00' });
+    gameContext.add.text(400, 700, myName, { font: '32px Courier', fill: '#ffff00' });
 
     gameContext.input.on('dragstart', function (pointer, gameObject) {
 
