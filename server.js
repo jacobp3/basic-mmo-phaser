@@ -54,7 +54,7 @@ io.on('connection',function(socket){
         socket.player = {
             id: server.lastPlayerID++
         };
-        hosts.push(id);
+        hosts.push(socket.player.id);
 
         socket.emit('allplayers',getAllPlayers());
 
